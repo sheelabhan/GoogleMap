@@ -4,12 +4,16 @@ import androidx.fragment.app.FragmentActivity;
 
 import android.os.Bundle;
 
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
@@ -19,6 +23,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
+
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -38,10 +43,24 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+        List<LatitudeLongitude> latlngs= new ArrayList<>();
+        latlngs.add(new LatitudeLongitude(27.706841, 85.330329, "Softwarica College"));
+        latlngs.add(new LatitudeLongitude(27.70482, 85.3293997, "Gopal dai ko chatamari"));
+        CameraUpdate center, zoom;
+        for(int i=0; i<latlngs.size();i++){
+            center= CameraUpdateFactory.newLatLng(new LatLng (latlngs.get(i).getLat(),
+                    latlngs.get(i).getLon()));
+            zoom=CameraUpdateFactory.zoomTo(16);
+            mMap.addMarker(new MarkerOptions().position(new LatLng(latlngs.get(i).getLat(),
+                   latlngs.get(i).getLon())).title(latlngs.get(i).getMarker()));
+            mMap.moveCamera(center);
+            mMap.animateCamera(zoom);
+            mMap.getUiSettings().setZoomControlsEnabled(true);
+        }
 
         // Add a marker in Sydney and move the camera
-        LatLng sydney = new LatLng(-34, 151);
-        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+//        LatLng softwarica = new LatLng(27.706841, 85.330329);
+//        mMap.addMarker(new MarkerOptions().position(softwarica).title("Marker in Softwarica"));
+//        mMap.moveCamera(CameraUpdateFactory.newLatLng(softwarica));
     }
 }
